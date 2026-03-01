@@ -33,32 +33,71 @@ By combining advanced time-series feature extraction (TSFEL and shapelet transfo
 ## Repository Structure
 
 ```plaintext
-├── data/
-│   ├── raw and processed data/                        # Raw ultrasound-derived waveform data first 4 columns (time,Brachial Data, Carotid diameter and blood velocity)...Preprocessed and synchronized, low-pass filtered, and normalized signals('Normalized Brachial', 'NormalizedFiltered Diameter' and 'Normalized Velocity')
+├── Raw and Processed data columns/ # Raw ultrasound-derived waveform data first 4 columns (time,Brachial Data, Carotid diameter and blood velocity)...Preprocessed and synchronized, low-pass filtered, and normalized signals('Normalized Brachial', 'NormalizedFiltered Diameter' and 'Normalized Velocity')
+│   ├── High_Risk_SPA--Raw_data
+│   ├── Low_Risk_SPA--Raw_data
+│   ├── High_r_stacked_rc_8.npy
+│   ├── Low_r_stacked_rc_8.npy
+│   ├── best_feature2_last_df.csv
+│   ├── combined_data_last.xlsx                       
 │
-├── notebooks/
-│   ├── 01_preprocessing.ipynb      # Signal cleaning and ECG-based alignment
-│   ├── 02_feature_extraction.ipynb # TSFEL + shapelet feature generation
-│   ├── 03_feature_selection.ipynb  # mRMR and MI-based ranking
-│   ├── 04_model_training.ipynb     # Training ML classifiers with GridSearchCV
-│   ├── 05_evaluation.ipynb         # Performance metrics and waveform analysis
+├── Feature_extraction_TSFEL_and_Shapeletes/
+│   ├── Multi_Variate_Shapelets/
+│       ├── Multivariate_shapelets.ipynb
+│   ├── TSFEL/
+│       ├── batch_processing.py
+│       ├── merger.py
 │
-├── src/
-│   ├── preprocessing.py            # Preprocessing scripts
-│   ├── tsfel_features.py           # TSFEL feature extraction utilities
-│   ├── shapelet_features.py        # Shapelet transform implementation
-│   ├── feature_selection.py        # mRMR feature selection
-│   ├── train_models.py             # Model training pipeline
-│   ├── evaluate.py                 # Evaluation and metrics computation
+├── Fusion_features_model_training
+│   ├── FUSION_OF_FEATURES.ipynb
 │
-├── figures/                        # Figures used in documentation/manuscript
-│   ├── pipeline.png
-│   ├── feature_scores.png
-│   ├── shapelets.png
-│   ├── mi_scores.png
+├── Preprocessing/                       
+│   ├──Normalization_of_all.py
+│   ├── low_pass.py
+│   ├── stacking.py
 │
 └── README.md                       # Project documentation
 ```
+**Note:** The tree above is a conceptual layout used in the manuscript workflow. In this repository, executable scripts are currently organized under `Preprocessing/` and `Feature_extraction_TSFEL_and_Shapeletes/`, with model training notebooks under `Fusion_features_model_training/`.
+
+## Dependencies
+
+The following dependencies were identified by scanning the Python scripts and notebooks in this repository.
+
+### Core Python packages
+
+- `numpy`
+- `pandas`
+- `scipy`
+- `openpyxl` (Excel I/O engine used by pandas)
+- `matplotlib`
+- `seaborn`
+- `scikit-learn`
+
+### Feature extraction and modeling packages
+
+- `tsfel`
+- `aeon` (shapelet transform utilities in notebooks)
+- `mrmr-selection` (imported as `mrmr`)
+- `xgboost`
+- `lightgbm`
+- `catboost`
+
+### Optional acceleration / environment-specific packages
+
+- `numba`
+- `cupy` (GPU-accelerated array operations in notebook experiments)
+
+### Suggested setup
+
+Use Python 3.10+ and install dependencies with:
+
+```bash
+pip install numpy pandas scipy openpyxl matplotlib seaborn scikit-learn tsfel aeon mrmr-selection xgboost lightgbm catboost numba
+```
+
+If you plan to run GPU experiments, install a CUDA-matching CuPy build separately from the official CuPy installation guide.
+
 ## Dataset Description
 
 ### Participants
@@ -172,4 +211,48 @@ To evaluate the role of each waveform, models were trained using individual and 
 | **All three combined** | **0.90** | **0.95** | **0.80** |
 
 **The multivariate model yielded the highest predictive performance**, demonstrating that pressure, diameter, and velocity waveforms carry complementary information about arterial mechanics and CVD risk.
+## Usage Workflow
+
+The project can be run as a stepwise pipeline:
+
+1. **Low-pass filter carotid diameter signal**
+   - Script: `Preprocessing/low_pass.py`
+2. **Normalize waveform columns per risk group**
+   - Script: `Preprocessing/Normalization_of_all.py`
+3. **Stack processed samples into `.npy` arrays**
+   - Script: `Preprocessing/stacking.py`
+4. **Extract TSFEL feature tables from each patient file**
+   - Script: `Feature_extraction_TSFEL_and_Shapeletes/TSFEL/batch_processing.py`
+5. **Merge high- and low-risk feature tables**
+   - Script: `Feature_extraction_TSFEL_and_Shapeletes/TSFEL/merger.py`
+6. **Train and evaluate fusion models**
+   - Notebook: `Fusion_features_model_training/FUSION_OF_FEATURES.ipynb`
+
+## Reproducibility Notes
+
+- Many scripts currently contain hard-coded Windows paths (e.g., `C:\Users\...`). Update these paths before running locally.
+- Input files are expected to be `.xlsx` format with canonical columns such as:
+  - `Brachial Data`
+  - `Carotid Diameter`
+  - `Filtered_Diameter (8 Hz)`
+  - `blood velocity`
+  - normalized columns generated during preprocessing
+- Some notebooks include exploratory blocks (including optional GPU code); results may vary depending on software versions and hardware.
+
+## Limitations
+
+- This repository includes research scripts and notebooks rather than a fully packaged Python module.
+- Paths and I/O conventions are dataset-specific and may require adaptation for external cohorts.
+- The raw clinical data are sensitive and not intended for unrestricted redistribution.
+
+## Citation
+
+If you use this repository or workflow in your research, please cite the associated study:
+
+> Machine Learning–Based Cardiovascular Risk Classification Using Multivariate Carotid Hemodynamic Time-Series Data.
+
+## License
+
+No explicit license file is currently included in this repository. Please contact the repository owner before reuse beyond academic reference.
+
 
