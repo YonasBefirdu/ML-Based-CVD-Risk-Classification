@@ -1,5 +1,6 @@
 # ML-Based-CVD-Risk-Classification-Using-Dynamic-Time-Series-Features-from-Duplex-Sonography
-This repository contains the workflows, code, and documentation for the study **“Machine Learning–Based Cardiovascular Risk Classification Using Multivariate Carotid Hemodynamic Time-Series Data.”**  
+This repository contains the workflows, code, and documentation for the study **“Machine Learning-
+Based Cardiovascular Disease Risk Classification Using Dynamic Time-Series Features from Carotid Duplex Sonography.”**  
 The project introduces a machine-learning framework that uses **dynamic arterial waveforms**—carotid diameter, Doppler flow velocity, and brachial pressure—to classify cardiovascular disease (CVD) risk.
 ## Overview
 
