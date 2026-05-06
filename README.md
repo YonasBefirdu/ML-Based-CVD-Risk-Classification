@@ -250,7 +250,7 @@ The project can be run as a stepwise pipeline:
 
 If you use this repository or workflow in your research, please cite the associated study:
 
-> Machine Learning-Based Cardiovascular Disease Risk Classification Using Dynamic Time-Series Features from Carotid Duplex Sonography
+> [Machine Learning–Based Cardiovascular Risk Classification Using Dynamic Time-Series Features From Carotid Duplex Sonography](https://doi.org/10.1002/ima.70360)
 
 ## License
 
